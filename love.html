@@ -1,0 +1,518 @@
+<title>Dành Cho Em</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@600;700&family=Raleway:wght@300;400;500&display=swap">
+
+<style>
+:root {
+  --bg: #0b0814;
+  --bg2: #130f22;
+  --fg: #f5e8d5;
+  --fg-soft: #bca898;
+  --accent: #e07b97;
+  --accent2: #b5566e;
+  --gold: #c9a96e;
+  --border: rgba(224,123,151,0.2);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: 'Raleway', sans-serif; font-weight: 300;
+  overflow-x: hidden;
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 12%, rgba(255,255,255,0.28) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 55%, rgba(255,255,255,0.22) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 65%, rgba(255,255,255,0.30) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 85%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(80% 50% at 50% 0%, rgba(224,123,151,0.07) 0%, transparent 100%);
+}
+
+/* ── THIỆP ── */
+#card-screen {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+#card-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.card-wrapper { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.envelope { width: min(320px, 88vw); transition: transform 0.3s; }
+.envelope:hover { transform: scale(1.03); }
+.env-body {
+  width: 100%; aspect-ratio: 3/2;
+  background: linear-gradient(145deg, #1e1535, #150e28);
+  border-radius: 12px; border: 1px solid rgba(224,123,151,0.35);
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(224,123,151,0.12), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.env-flap {
+  position: absolute; top: 0; left: 0; right: 0; height: 56%;
+  background: linear-gradient(160deg, #251b42, #1a1230);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-radius: 12px 12px 0 0;
+  transform-origin: top center;
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); z-index: 2;
+}
+.env-flap.open { transform: rotateX(-180deg); }
+.env-seal {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-size: 2rem; z-index: 3;
+  animation: pulse-seal 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(224,123,151,0.8));
+}
+@keyframes pulse-seal { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.15)} }
+.env-deco { position: absolute; inset: 8px; border: 1px solid rgba(224,123,151,0.12); border-radius: 8px; pointer-events: none; }
+.env-body::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 54%;
+  background: linear-gradient(to top, #0f0b1e, #170f2a);
+  clip-path: polygon(0 100%, 50% 0, 100% 100%); border-radius: 0 0 12px 12px;
+}
+.card-title {
+  font-family: 'Dancing Script', cursive; font-size: clamp(1.6rem,6vw,2.4rem);
+  color: var(--accent); margin-bottom: 24px; text-align: center;
+  filter: drop-shadow(0 0 12px rgba(224,123,151,0.4));
+}
+.tap-hint {
+  margin-top: 28px; font-size: 0.82rem; letter-spacing: 0.15em;
+  color: var(--fg-soft); text-transform: uppercase;
+  animation: fade-hint 2s ease-in-out infinite;
+}
+@keyframes fade-hint { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+/* ── MAIN ── */
+#main-content {
+  position: relative; z-index: 1;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+}
+#main-content.visible { opacity: 1; transform: translateY(0); }
+
+/* ── LỜI CHÚC ── */
+.wishes-section {
+  max-width: 600px; margin: 0 auto;
+  padding: 80px max(20px,env(safe-area-inset-left,0px)) 60px;
+}
+.wishes-header { text-align: center; margin-bottom: 48px; }
+.wishes-header .eyebrow {
+  font-size: 0.75rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+}
+.wishes-header h1 {
+  font-family: 'Dancing Script', cursive; font-size: clamp(2.2rem,8vw,3.6rem);
+  color: var(--fg); line-height: 1.2;
+  filter: drop-shadow(0 0 20px rgba(224,123,151,0.25));
+}
+.wish-item {
+  margin-bottom: 32px; opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  padding-left: 20px; border-left: 2px solid rgba(224,123,151,0.3);
+}
+.wish-item.show { opacity: 1; transform: translateY(0); }
+.wish-text {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1rem,3vw,1.15rem); color: var(--fg); line-height: 1.75;
+}
+.wish-divider { text-align: center; color: var(--accent); font-size: 1.1rem; letter-spacing: 0.4em; margin: 36px 0; opacity: 0.4; }
+
+/* ── SLIDESHOW ── */
+.slideshow-section { padding: 0 0 100px; }
+.slideshow-header { text-align: center; padding: 0 20px 32px; }
+.slideshow-header h2 { font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem,6vw,2.8rem); color: var(--accent); margin-bottom: 6px; }
+.slideshow-header p { font-size: 0.82rem; color: var(--fg-soft); }
+
+.slideshow-wrap {
+  position: relative; width: 92%; margin: 0 auto;
+  aspect-ratio: 4/5; max-height: 90svh;
+  overflow: hidden; background: var(--bg);
+  border-radius: 28px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(224,123,151,0.15), 0 0 60px rgba(224,123,151,0.08);
+}
+
+.slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; overflow: hidden; }
+.slide.active { opacity: 1; }
+
+.slide img {
+  width: 100%; height: 100%; object-fit: cover; display: none;
+  animation: kb1 10s ease-in-out infinite alternate;
+}
+.slide img.loaded { display: block; }
+.slide:nth-child(1) img { animation-name: kb1; }
+.slide:nth-child(2) img { animation-name: kb2; }
+.slide:nth-child(3) img { animation-name: kb3; }
+.slide:nth-child(4) img { animation-name: kb4; }
+.slide:nth-child(5) img { animation-name: kb5; }
+.slide:nth-child(6) img { animation-name: kb6; }
+@keyframes kb1 { from{transform:scale(1) translate(0,0)} to{transform:scale(1.1) translate(-2%,-1%)} }
+@keyframes kb2 { from{transform:scale(1.06) translate(1%,0)} to{transform:scale(1) translate(-1%,2%)} }
+@keyframes kb3 { from{transform:scale(1) translate(-1%,1%)} to{transform:scale(1.08) translate(2%,-1%)} }
+@keyframes kb4 { from{transform:scale(1.05) translate(0,1%)} to{transform:scale(1) translate(-2%,-2%)} }
+@keyframes kb5 { from{transform:scale(1) translate(2%,-1%)} to{transform:scale(1.09) translate(-1%,1%)} }
+@keyframes kb6 { from{transform:scale(1.07) translate(-1%,0)} to{transform:scale(1) translate(1%,2%)} }
+
+.slide::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, transparent 25%, transparent 65%, rgba(11,8,20,0.65) 100%);
+  z-index: 3;
+}
+.slide img {
+  border-radius: 28px;
+}
+
+/* ── ANIMATED PLACEHOLDER BG ── */
+.ph-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+
+/* Gradient nền mỗi slide */
+.slide:nth-child(1) .ph-bg { background: radial-gradient(ellipse at 30% 40%, #3d0f25 0%, #1a0a1e 50%, #0b0814 100%); }
+.slide:nth-child(2) .ph-bg { background: radial-gradient(ellipse at 70% 30%, #1a0d35 0%, #0d1428 50%, #080812 100%); }
+.slide:nth-child(3) .ph-bg { background: radial-gradient(ellipse at 40% 60%, #2e1a08 0%, #1a0f22 50%, #0b0814 100%); }
+.slide:nth-child(4) .ph-bg { background: radial-gradient(ellipse at 60% 40%, #081e2e 0%, #0d1a2a 50%, #080810 100%); }
+.slide:nth-child(5) .ph-bg { background: radial-gradient(ellipse at 35% 55%, #2a0d28 0%, #1a0e20 50%, #0b0814 100%); }
+.slide:nth-child(6) .ph-bg { background: radial-gradient(ellipse at 65% 45%, #1e1a08 0%, #18102a 50%, #0b0814 100%); }
+
+/* Các orb sáng nổi bồng bềnh */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(55px); opacity: 0;
+  animation: orb-appear 1.5s ease forwards;
+}
+
+@keyframes orb-appear { to { opacity: 1; } }
+
+/* Slide 1 — Hồng / Tím */
+.slide:nth-child(1) .orb1 { width:280px;height:280px; background:#c4607a; top:-80px;left:-60px; animation: orb-appear 1.5s ease forwards, drift-a 7s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(1) .orb2 { width:220px;height:220px; background:#7b3fad; bottom:-60px;right:-40px; animation: orb-appear 1.5s 0.3s ease forwards, drift-b 9s ease-in-out infinite alternate 1.8s; opacity:0; }
+.slide:nth-child(1) .orb3 { width:160px;height:160px; background:#e07b97; top:40%;left:40%; animation: orb-appear 1.5s 0.6s ease forwards, drift-c 6s ease-in-out infinite alternate 2.1s; opacity:0; }
+
+/* Slide 2 — Xanh tím / Indigo */
+.slide:nth-child(2) .orb1 { width:260px;height:260px; background:#3b2f8a; top:-60px;right:-50px; animation: orb-appear 1.5s ease forwards, drift-b 8s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(2) .orb2 { width:200px;height:200px; background:#7b4fad; bottom:-40px;left:-30px; animation: orb-appear 1.5s 0.4s ease forwards, drift-a 10s ease-in-out infinite alternate 1.9s; opacity:0; }
+.slide:nth-child(2) .orb3 { width:140px;height:140px; background:#4fa3d4; top:35%;right:25%; animation: orb-appear 1.5s 0.7s ease forwards, drift-c 7s ease-in-out infinite alternate 2.2s; opacity:0; }
+
+/* Slide 3 — Vàng / Amber */
+.slide:nth-child(3) .orb1 { width:300px;height:300px; background:#8a5a1a; top:-80px;left:-60px; animation: orb-appear 1.5s ease forwards, drift-c 9s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(3) .orb2 { width:220px;height:220px; background:#c4607a; bottom:-50px;right:-30px; animation: orb-appear 1.5s 0.3s ease forwards, drift-a 7s ease-in-out infinite alternate 1.8s; opacity:0; }
+.slide:nth-child(3) .orb3 { width:170px;height:170px; background:#c9a96e; top:30%;right:20%; animation: orb-appear 1.5s 0.6s ease forwards, drift-b 8s ease-in-out infinite alternate 2.1s; opacity:0; }
+
+/* Slide 4 — Xanh dương đêm */
+.slide:nth-child(4) .orb1 { width:270px;height:270px; background:#1a4a7a; bottom:-60px;left:-40px; animation: orb-appear 1.5s ease forwards, drift-a 8s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(4) .orb2 { width:210px;height:210px; background:#6b3fad; top:-50px;right:-30px; animation: orb-appear 1.5s 0.4s ease forwards, drift-c 10s ease-in-out infinite alternate 1.9s; opacity:0; }
+.slide:nth-child(4) .orb3 { width:150px;height:150px; background:#2a8aaa; top:40%;left:30%; animation: orb-appear 1.5s 0.7s ease forwards, drift-b 6s ease-in-out infinite alternate 2.2s; opacity:0; }
+
+/* Slide 5 — Lavender / Hồng tím */
+.slide:nth-child(5) .orb1 { width:290px;height:290px; background:#7a2a7a; top:-70px;right:-50px; animation: orb-appear 1.5s ease forwards, drift-b 7s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(5) .orb2 { width:230px;height:230px; background:#c4607a; bottom:-60px;left:-40px; animation: orb-appear 1.5s 0.3s ease forwards, drift-a 9s ease-in-out infinite alternate 1.8s; opacity:0; }
+.slide:nth-child(5) .orb3 { width:160px;height:160px; background:#ad6fad; top:35%;left:35%; animation: orb-appear 1.5s 0.6s ease forwards, drift-c 8s ease-in-out infinite alternate 2.1s; opacity:0; }
+
+/* Slide 6 — Midnight rose */
+.slide:nth-child(6) .orb1 { width:260px;height:260px; background:#4a1a1a; top:-60px;left:-50px; animation: orb-appear 1.5s ease forwards, drift-c 8s ease-in-out infinite alternate 1.5s; opacity:0; }
+.slide:nth-child(6) .orb2 { width:210px;height:210px; background:#8a3060; bottom:-50px;right:-30px; animation: orb-appear 1.5s 0.4s ease forwards, drift-b 10s ease-in-out infinite alternate 1.9s; opacity:0; }
+.slide:nth-child(6) .orb3 { width:180px;height:180px; background:#c9a96e; bottom:30%;left:25%; animation: orb-appear 1.5s 0.7s ease forwards, drift-a 7s ease-in-out infinite alternate 2.2s; opacity:0; }
+
+@keyframes drift-a { from{transform:translate(0,0) scale(1)} to{transform:translate(30px,20px) scale(1.1)} }
+@keyframes drift-b { from{transform:translate(0,0) scale(1)} to{transform:translate(-25px,15px) scale(1.08)} }
+@keyframes drift-c { from{transform:translate(0,0) scale(1)} to{transform:translate(15px,-20px) scale(1.12)} }
+
+/* Particles nhỏ li ti */
+.ph-particles { position: absolute; inset: 0; pointer-events: none; }
+
+/* Chữ trên placeholder */
+.ph-label {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px;
+  pointer-events: none;
+}
+.ph-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Dancing Script', cursive; font-size: 1.4rem;
+  color: rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  animation: ph-pulse 3s ease-in-out infinite;
+}
+@keyframes ph-pulse { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:0.9;transform:scale(1.06)} }
+.ph-text { font-size: 0.75rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
+
+/* Shimmer light sweep */
+.ph-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.04) 50%, transparent 65%);
+  animation: shimmer 4s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+@keyframes shimmer { 0%{background-position:-100% 0} 100%{background-position:200% 0} }
+
+/* Dots + counter */
+.slide-dots { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 5; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: background 0.3s, transform 0.3s; border: none; padding: 0; }
+.dot.active { background: var(--accent); transform: scale(1.4); }
+.slide-counter { position: absolute; top: 16px; right: 16px; font-size: 0.72rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.45); z-index: 5; font-variant-numeric: tabular-nums; }
+
+/* Hearts */
+#hearts-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<canvas id="hearts-canvas"></canvas>
+
+<!-- NHẠC NỀN — thay src="" bằng đường dẫn file nhạc, ví dụ: src="song.mp3" -->
+<audio id="audio-el" loop src="Beautiful In White.mp3" style="display:none"></audio>
+
+<!-- THIỆP -->
+<div id="card-screen">
+  <p class="card-title">✉️ Có thư gửi em...</p>
+  <div class="card-wrapper" onclick="openCard()">
+    <div class="envelope">
+      <div class="env-body">
+        <div class="env-flap" id="env-flap"></div>
+        <div class="env-seal" id="env-seal">♥</div>
+        <div class="env-deco"></div>
+      </div>
+    </div>
+  </div>
+  <p class="tap-hint">✦ Nhấn để mở ✦</p>
+</div>
+
+<!-- MAIN -->
+<div id="main-content">
+
+  <section class="wishes-section">
+    <div class="wishes-header">
+      <p class="eyebrow">✦ Dành riêng cho em ✦</p>
+      <h1>Dear bé Linh ♥</h1>
+    </div>
+    <div class="wish-item">
+      <p class="wish-text">Cảm ơn em những ngày qua đã cùng anh trải qua những tháng ngày khó khăn. Mặc dù phía trước vẫn còn nhiều chông gai, nhưng anh tin rằng tình yêu của tụi mình sẽ vượt qua được tất cả.</p>
+    </div>
+    <div class="wish-item">
+      <p class="wish-text">Mong em vững bước trên con đường em đang đi. Anh luôn ở đây — không đi đâu hết.</p>
+    </div>
+    <div class="wish-divider">· · ·</div>
+    <div class="wish-item">
+      <p class="wish-text">Bây giờ em với anh không chỉ là tình yêu nữa — mà còn là sự đồng hành, là niềm tin, là trách nhiệm với thế giới của mình.</p>
+    </div>
+    <div class="wish-item">
+      <p class="wish-text">Cảm ơn em, Linh.</p>
+    </div>
+  </section>
+
+  <section class="slideshow-section">
+    <div class="slideshow-header">
+    </div>
+
+    <div class="slideshow-wrap">
+
+      <!-- Slide 1 -->
+      <div class="slide active">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="0"></canvas>
+        <img src="hinh_1.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">1</div></div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="1"></canvas>
+        <img src="hinh_2.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">2</div></div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="2"></canvas>
+        <img src="hinh_3.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">3</div></div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="3"></canvas>
+        <img src="hinh_4.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">4</div></div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="4"></canvas>
+        <img src="hinh_5.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">5</div></div>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="slide">
+        <div class="ph-bg"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+        <canvas class="ph-particles" data-idx="5"></canvas>
+        <img src="hinh_6.jpg" alt="">
+        <div class="ph-label"><div class="ph-num">6</div></div>
+      </div>
+
+      <div class="slide-counter"><span id="cur-num">1</span> / 6</div>
+      <div class="slide-dots" id="dots"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+// ── HEARTS ──────────────────────────────────────────────────
+const hCanvas = document.getElementById('hearts-canvas');
+const hCtx = hCanvas.getContext('2d');
+let hearts = [], heartsOn = false;
+function resizeH() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; }
+resizeH(); addEventListener('resize', resizeH);
+function spawnHeart() {
+  hearts.push({ x: Math.random()*hCanvas.width, y: hCanvas.height+20, size: Math.random()*11+5,
+    speed: Math.random()*0.55+0.25, opacity: Math.random()*0.3+0.07,
+    drift: (Math.random()-0.5)*0.35, wobble: Math.random()*Math.PI*2, wobbleSpeed: Math.random()*0.02+0.008 });
+}
+function drawH(x,y,s,op) {
+  hCtx.save(); hCtx.globalAlpha=op; hCtx.fillStyle='#e07b97';
+  hCtx.beginPath(); hCtx.moveTo(x,y+s*.3);
+  hCtx.bezierCurveTo(x,y,x-s*.5,y,x-s*.5,y+s*.3);
+  hCtx.bezierCurveTo(x-s*.5,y+s*.65,x,y+s*.9,x,y+s);
+  hCtx.bezierCurveTo(x,y+s*.9,x+s*.5,y+s*.65,x+s*.5,y+s*.3);
+  hCtx.bezierCurveTo(x+s*.5,y,x,y,x,y+s*.3);
+  hCtx.fill(); hCtx.restore();
+}
+(function loopH() {
+  hCtx.clearRect(0,0,hCanvas.width,hCanvas.height);
+  if (heartsOn && Math.random()<0.035) spawnHeart();
+  hearts = hearts.filter(h=>h.y>-30);
+  for (const h of hearts) { h.y-=h.speed; h.wobble+=h.wobbleSpeed; h.x+=Math.sin(h.wobble)*h.drift; drawH(h.x,h.y,h.size,h.opacity); }
+  requestAnimationFrame(loopH);
+})();
+
+// ── PARTICLES trên mỗi slide placeholder ──────────────────
+const PARTICLE_COLORS = [
+  ['#e07b97','#c9a96e','#b5566e'],
+  ['#6b5fad','#4fa3d4','#9b7fdd'],
+  ['#c9a96e','#e07b97','#8a5a1a'],
+  ['#4fa3d4','#6b5fad','#2a8aaa'],
+  ['#ad6fad','#e07b97','#7a2a7a'],
+  ['#c9a96e','#8a3060','#e07b97']
+];
+
+document.querySelectorAll('.ph-particles').forEach(canvas => {
+  const idx = +canvas.dataset.idx;
+  const colors = PARTICLE_COLORS[idx];
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
+
+  function resize() {
+    w = canvas.width = canvas.offsetWidth;
+    h = canvas.height = canvas.offsetHeight;
+  }
+
+  function spawn() {
+    particles.push({
+      x: Math.random()*w, y: Math.random()*h,
+      r: Math.random()*2+0.5,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      opacity: Math.random()*0.5+0.1,
+      vx: (Math.random()-0.5)*0.3,
+      vy: -Math.random()*0.4-0.1,
+      life: 1, decay: Math.random()*0.003+0.001
+    });
+  }
+
+  function loopP() {
+    if (!w) resize();
+    ctx.clearRect(0,0,w,h);
+    if (particles.length < 40) spawn();
+    particles = particles.filter(p=>p.life>0);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+      if (p.y < 0) { p.y = h; p.x = Math.random()*w; p.life = 1; }
+      ctx.save(); ctx.globalAlpha = p.opacity*p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    requestAnimationFrame(loopP);
+  }
+  resize();
+  loopP();
+  window.addEventListener('resize', resize);
+});
+
+// ── XỬ LÝ ẢNH: ẩn placeholder khi ảnh load được ──────────
+document.querySelectorAll('.slide img').forEach(img => {
+  if (!img.src || img.src === location.href) return;
+  img.addEventListener('load', () => {
+    img.classList.add('loaded');
+    const slide = img.closest('.slide');
+    if (slide) {
+      slide.querySelector('.ph-bg').style.display = 'none';
+      slide.querySelector('.ph-particles').style.display = 'none';
+      slide.querySelector('.ph-label').style.display = 'none';
+    }
+  });
+});
+
+// ── MỞ THIỆP ────────────────────────────────────────────────
+let opened = false;
+function openCard() {
+  if (opened) return; opened = true;
+  document.getElementById('env-flap').classList.add('open');
+  document.getElementById('env-seal').style.display = 'none';
+  setTimeout(() => {
+    document.getElementById('card-screen').classList.add('hidden');
+    document.getElementById('main-content').classList.add('visible');
+    heartsOn = true;
+    const audio = document.getElementById('audio-el');
+    if (audio.src && audio.src !== location.href) audio.play().catch(()=>{});
+    document.querySelectorAll('.wish-item').forEach((el,i) => {
+      setTimeout(() => el.classList.add('show'), 300 + i*200);
+    });
+  }, 900);
+}
+
+// ── SLIDESHOW ────────────────────────────────────────────────
+const slides = document.querySelectorAll('.slide');
+const dotsWrap = document.getElementById('dots');
+const curNum = document.getElementById('cur-num');
+let current = 0;
+
+slides.forEach((_,i) => {
+  const btn = document.createElement('button');
+  btn.className = 'dot' + (i===0?' active':'');
+  btn.onclick = () => { goTo(i); clearInterval(timer); timer = setInterval(()=>goTo(current+1), 4500); };
+  dotsWrap.appendChild(btn);
+});
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  dotsWrap.children[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dotsWrap.children[current].classList.add('active');
+  curNum.textContent = current + 1;
+}
+
+let timer = setInterval(() => goTo(current+1), 4500);
+
+let touchX = 0;
+const sw = document.querySelector('.slideshow-wrap');
+sw.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, {passive:true});
+sw.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 40) { goTo(current + (dx<0?1:-1)); clearInterval(timer); timer = setInterval(()=>goTo(current+1), 4500); }
+}, {passive:true});
+</script>
